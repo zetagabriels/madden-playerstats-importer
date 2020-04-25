@@ -1,0 +1,31 @@
+{
+  "name": "madden-playerstats-importer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node ./js/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zetagabriels/madden-playerstats-importer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zetagabriels/madden-playerstats-importer/issues"
+  },
+  "homepage": "https://github.com/zetagabriels/madden-playerstats-importer#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.8.0",
+    "pkg": "^4.4.7"
+  }
+}
