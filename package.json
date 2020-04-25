@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/zetagabriels/madden-playerstats-importer#readme",
   "dependencies": {
+    "@akanass/rx-http-request": "^3.3.0",
+    "@types/cheerio": "^0.22.18",
     "cheerio": "^1.0.0-rc.3",
+    "rxjs": "^6.5.5",
     "typescript": "^3.8.3"
   },
   "devDependencies": {
