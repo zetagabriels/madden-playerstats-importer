@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "no-string-literal": false,
         "quotemark": [
             true,
             "single"
