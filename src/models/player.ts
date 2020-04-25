@@ -1,3 +1,11 @@
 export default class Player {
-    constructor(private rank: number, private name: string, private team: string) { }
+    rank!: number;
+    name!: string;
+    team!: string;
+    position!: string;
+
+    public static convert(json: any): Player {
+        const p = new Player();
+        return p;
+    }
 }
