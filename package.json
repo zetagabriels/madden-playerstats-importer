@@ -21,14 +21,13 @@
     "@akanass/rx-http-request": "^3.3.0",
     "@types/cheerio": "^0.22.18",
     "cheerio": "^1.0.0-rc.3",
+    "getopts": "^2.2.5",
     "rxjs": "^6.5.5",
     "typescript": "^3.8.3"
   },
   "devDependencies": {
     "@types/node": "^13.13.2",
-    "@typescript-eslint/eslint-plugin": "^2.29.0",
-    "@typescript-eslint/parser": "^2.29.0",
-    "eslint": "^6.8.0",
-    "pkg": "^4.4.7"
+    "pkg": "^4.4.7",
+    "tslint": "^6.1.1"
   }
 }
