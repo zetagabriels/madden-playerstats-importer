@@ -1,6 +1,6 @@
 import IPlayer from './iplayer';
 
-export default class Player implements IPlayer {
+export default abstract class Player implements IPlayer {
   name!: string;
   team!: string;
   position!: string;
