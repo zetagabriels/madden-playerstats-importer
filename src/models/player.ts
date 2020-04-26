@@ -5,11 +5,17 @@ export default class Player {
   gamesPlayed!: number;
   gamesStarted!: number;
 
-  constructor(json: any) {
-    this.name = json.player;
-    this.team = json.team;
-    this.position = json.pos;
-    this.gamesPlayed = json.g;
-    this.gamesStarted = json.gs;
+  constructor() {
+    this.name = 'cool guy';
+  }
+
+  public static convert(json: any): Player {
+    const p = new Player();
+    p.name = json.player;
+    p.team = json.team;
+    p.position = json.pos;
+    p.gamesPlayed = json.g;
+    p.gamesStarted = json.gs;
+    return p;
   }
 }

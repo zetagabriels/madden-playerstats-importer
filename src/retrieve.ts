@@ -2,7 +2,7 @@ import cheerio from 'cheerio';
 import { RxHR } from '@akanass/rx-http-request';
 import { Observable, of } from 'rxjs';
 import { retry, switchMap } from 'rxjs/operators';
-import { write } from './helpers';
+import { write, instantiate, PlayerFactory } from './helpers';
 import Player from './models/player';
 
 /*
@@ -19,10 +19,6 @@ function getWebpage(url: string): Observable<CheerioStatic> {
     retry(1),
     switchMap(response => of(cheerio.load(response.body))),
   );
-}
-
-function createInstance<T extends Player>(p: new (json: any) => T, json: any): T {
-  return new p(json);
 }
 
 function convertToPlayerArray<T extends Player>($: CheerioStatic): Observable<T[]> {
@@ -49,7 +45,10 @@ function convertToPlayerArray<T extends Player>($: CheerioStatic): Observable<T[
 
     list.forEach(v => json[v.name] = v.value);
 
-    const player = createInstance(T, json);
+    const p = Player.convert(json);
+    const z = p as T;
+    new PlayerFactory()
+    const player: T = instantiate(T, json);
     players.push(player);
   });
 

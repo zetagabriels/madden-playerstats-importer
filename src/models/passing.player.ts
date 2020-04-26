@@ -12,6 +12,6 @@ export default class PassingPlayer extends Player {
   fourthQuarterComebacks!: number;
 
   constructor(json: any) {
-    super(json);
+    super();
   }
 }
