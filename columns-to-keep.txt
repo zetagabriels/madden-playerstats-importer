@@ -1,0 +1,61 @@
+Passing:
+    Player
+    Team
+    Pos
+    G
+    GS
+    Cmp
+    Att
+    Yds
+    TD
+    Int
+    1D
+    Lng
+    Sk
+    4QC
+
+Defense:
+    Player
+    Team
+    Pos
+    G
+    Gs
+    Int
+    Def_Int_Yds
+    TD
+    Lng
+    PD
+    FF
+    FR
+    Fumble_Yds
+    TD
+    Sk
+    Ast
+    TFL
+    Sfty
+
+Rushing:
+    Player
+    Tm
+    Pos
+    G
+    GS
+    Att
+    Yds
+    TD
+    1D
+    Lng
+    Fmb
+
+Receiving:
+    Player
+    Tm
+    Pos
+    G
+    Gs
+    Rec
+    Yds
+    TD
+    1D
+    Lng
+    Fmb
