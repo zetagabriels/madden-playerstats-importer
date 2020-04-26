@@ -11,8 +11,7 @@ export default class PassingPlayer extends Player {
   sacksTaken!: number;
   fourthQuarterComebacks!: number;
 
-  public static convert(json: any): PassingPlayer {
-    const p = super.convert(json) as PassingPlayer;
-    return p;
+  constructor(json: any) {
+    super(json);
   }
 }

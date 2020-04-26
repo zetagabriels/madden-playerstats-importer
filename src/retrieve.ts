@@ -2,8 +2,8 @@ import cheerio from 'cheerio';
 import { RxHR } from '@akanass/rx-http-request';
 import { Observable, of } from 'rxjs';
 import { retry, switchMap } from 'rxjs/operators';
-import PassingPlayer from './models/passing.player';
 import { write } from './helpers';
+import Player from './models/player';
 
 /*
  * TODO
@@ -21,8 +21,12 @@ function getWebpage(url: string): Observable<CheerioStatic> {
   );
 }
 
-function convertToPlayerArray($: CheerioStatic): Observable<PassingPlayer[]> {
-  const players: PassingPlayer[] = [];
+function createInstance<T extends Player>(p: new (json: any) => T, json: any): T {
+  return new p(json);
+}
+
+function convertToPlayerArray<T extends Player>($: CheerioStatic): Observable<T[]> {
+  const players: T[] = [];
   $('tbody > tr:not(.thead)').each((_, tr) => {
     const $tr = $(tr);
     const json: { [key: string]: string | number } = {};
@@ -45,7 +49,7 @@ function convertToPlayerArray($: CheerioStatic): Observable<PassingPlayer[]> {
 
     list.forEach(v => json[v.name] = v.value);
 
-    const player = PassingPlayer.convert(json);
+    const player = createInstance(T, json);
     players.push(player);
   });
 
@@ -53,8 +57,8 @@ function convertToPlayerArray($: CheerioStatic): Observable<PassingPlayer[]> {
   return of(players);
 }
 
-export default function getRemoteData(url: string): Observable<PassingPlayer[]> {
+export default function getRemoteData<T extends Player>(url: string): Observable<T[]> {
   return getWebpage(url).pipe(
-    switchMap(convertToPlayerArray)
+    switchMap($ => convertToPlayerArray<T>($))
   );
 }
