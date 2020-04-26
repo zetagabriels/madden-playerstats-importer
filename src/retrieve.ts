@@ -2,17 +2,8 @@ import cheerio from 'cheerio';
 import { RxHR } from '@akanass/rx-http-request';
 import { Observable, of } from 'rxjs';
 import { retry, switchMap } from 'rxjs/operators';
-import { write, instantiate, PlayerFactory } from './helpers';
+import { writeLine } from './helpers';
 import Player from './models/player';
-
-/*
- * TODO
- *
- * Need to convert *each type* of player based on the webpage requested.
- * Each has completely unique fields, outside the ones in Player.ts
- * Need to genericize the "convertToPlayerArray" to only grab those fields, then pass to the proper class
- *
-*/
 
 function getWebpage(url: string): Observable<CheerioStatic> {
   return RxHR.get(url).pipe(
@@ -45,14 +36,13 @@ function convertToPlayerArray<T extends Player>($: CheerioStatic): Observable<T[
 
     list.forEach(v => json[v.name] = v.value);
 
-    const p = Player.convert(json);
-    const z = p as T;
-    new PlayerFactory()
-    const player: T = instantiate(T, json);
+    const player = (new Player() as T);
+    player.convert(json);
+    // console.log(JSON.stringify(player));
     players.push(player);
   });
 
-  write('Retrieved and parsed all players from remote source.');
+  writeLine('Retrieved and parsed all players from remote source.');
   return of(players);
 }
 

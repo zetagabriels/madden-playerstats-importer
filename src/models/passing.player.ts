@@ -11,7 +11,10 @@ export default class PassingPlayer extends Player {
   sacksTaken!: number;
   fourthQuarterComebacks!: number;
 
-  constructor(json: any) {
-    super();
+  convert(json: any): void {
+    console.log('hello');
+    super.convert(json);
+    this.completions = json.cmp;
+    this.firstDowns = 100;
   }
 }
