@@ -12,7 +12,6 @@ export default class PassingPlayer extends Player {
   fourthQuarterComebacks!: number;
 
   convert(json: any): void {
-    console.log('hello');
     super.convert(json);
     this.completions = json.cmp;
     this.firstDowns = 100;

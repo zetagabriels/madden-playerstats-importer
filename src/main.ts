@@ -1,7 +1,8 @@
 import getopts from 'getopts';
 import { generateUrl } from './helpers';
-import getRemoteData from './retrieve';
+import { getPassingPlayers, getDefensePlayers } from './retrieve';
 import PassingPlayer from './models/passing.player';
+import RushingPlayer from './models/rushing.player';
 
 function main(): void {
   const opts = getopts(process.argv.slice(2), {
@@ -15,8 +16,7 @@ function main(): void {
   });
 
   // do this with all four types of player
-  const url = generateUrl(opts.year, 'passing');
-  getRemoteData<PassingPlayer>(url).subscribe();
+  getPassingPlayers(opts.year).subscribe();
 
   /* EMPTY.pipe(
     switchMap(() => {

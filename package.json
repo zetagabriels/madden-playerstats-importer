@@ -22,8 +22,10 @@
     "@types/cheerio": "^0.22.18",
     "cheerio": "^1.0.0-rc.3",
     "getopts": "^2.2.5",
+    "madden-franchise": "^2.1.0",
     "rxjs": "^6.5.5",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "xlsx": "^0.16.1"
   },
   "devDependencies": {
     "@types/node": "^13.13.2",
