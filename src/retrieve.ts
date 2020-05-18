@@ -117,5 +117,19 @@ export function getDefensePlayers(year: string | number): Observable<DefensePlay
   const url = generateUrl(year, 'defense');
   return getWebpage(url).pipe(
     switchMap($ => convertToDefensePlayers($))
-  )
+  );
+}
+
+export function getRushingPlayers(year: string | number): Observable<RushingPlayer[]> {
+  const url = generateUrl(year, 'rushing');
+  return getWebpage(url).pipe(
+    switchMap($ => convertToRushingPlayers($))
+  );
+}
+
+export function getReceivingPlayers(year: string | number): Observable<ReceivingPlayer[]> {
+  const url = generateUrl(year, 'receiving');
+  return getWebpage(url).pipe(
+    switchMap($ => convertToReceivingPlayers($))
+  );
 }
