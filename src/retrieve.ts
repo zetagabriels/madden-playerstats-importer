@@ -102,7 +102,6 @@ function parseWebpage($: CheerioStatic): Observable<{ [key: string]: string | nu
     rows.push(json);
   });
 
-  writeLine('Retrieved and parsed all players from remote source.');
   return of(rows);
 }
 
