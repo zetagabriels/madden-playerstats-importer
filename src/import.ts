@@ -2,14 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import getopts from 'getopts';
 import { getPassingPlayers, getDefensePlayers, getReceivingPlayers, getRushingPlayers } from './retrieve';
-import { EMPTY, from, Observable } from 'rxjs';
-import { switchMap, mergeAll, map } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { mergeAll, map } from 'rxjs/operators';
 import Player from './models/player';
+import { writeLine } from './helpers';
 
-export function getAllPlayers(year: number | string): Observable<Player[]> {
-  // do this with all four types of player
-  // getPassingPlayers(opts.year).subscribe();
-
+export default function getAllPlayers(year: number | string): Observable<Player[]> {
   const observables: Observable<Player[]>[] = [getPassingPlayers(year), getRushingPlayers(year),
   getDefensePlayers(year), getReceivingPlayers(year)];
 
@@ -27,11 +25,16 @@ function main(): void {
     },
   });
 
+  writeLine(`Now retrieving all players for year ${opts.year}...`);
+
   let i = 0;
   const players = getAllPlayers(opts.year);
   players.pipe(
     map((ps: Player[]) => {
-      fs.writeFileSync(path.join(__dirname, `../temp/players-${i}.json`), JSON.stringify(ps));
+      const writePath = path.join(__dirname, `../temp/players-${i}.json`);
+      writeLine(`Retrieved ${i + 1} of 4 OK`);
+      fs.writeFileSync(writePath, JSON.stringify(ps));
+      writeLine(`Wrote to ${writePath}`);
       i++;
     })
   ).subscribe();
