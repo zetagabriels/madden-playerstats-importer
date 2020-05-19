@@ -31,6 +31,8 @@ function main(): void {
   const players = getAllPlayers(opts.year);
   players.pipe(
     map((ps: Player[]) => {
+      if (ps.length === 0) return;
+
       const writePath = path.join(__dirname, `../temp/players-${i}.json`);
       writeLine(`Retrieved ${i + 1} of 4 OK`);
       fs.writeFileSync(writePath, JSON.stringify(ps));

@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
 import { RxHR } from '@akanass/rx-http-request';
 import { Observable, of } from 'rxjs';
-import { retry, switchMap } from 'rxjs/operators';
+import { retry, switchMap, catchError } from 'rxjs/operators';
 import { writeLine, generateUrl } from './helpers';
 import DefensePlayer from './models/defense.player';
 import PassingPlayer from './models/passing.player';
@@ -12,6 +12,10 @@ function getWebpage(url: string): Observable<CheerioStatic> {
   return RxHR.get(url).pipe(
     retry(1),
     switchMap(response => of(cheerio.load(response.body))),
+    catchError(() => {
+      writeLine('Error retrieving remote data!');
+      return of(cheerio.load(''));
+    })
   );
 }
 
@@ -29,6 +33,9 @@ function convertToPassingPlayers($: CheerioStatic): Observable<PassingPlayer[]> 
         p.convert(jsonObj);
         arr.push(p);
       }
+      if (arr.length === 0) {
+        writeLine('No passing players found.');
+      }
       return of(arr);
     })
   );
@@ -42,6 +49,9 @@ function convertToDefensePlayers($: CheerioStatic): Observable<DefensePlayer[]> 
         const p = new DefensePlayer();
         p.convert(jsonObj);
         arr.push(p);
+      }
+      if (arr.length === 0) {
+        writeLine('No defense players found.');
       }
       return of(arr);
     })
@@ -57,6 +67,9 @@ function convertToRushingPlayers($: CheerioStatic): Observable<RushingPlayer[]> 
         p.convert(jsonObj);
         arr.push(p);
       }
+      if (arr.length === 0) {
+        writeLine('No rushing players found.');
+      }
       return of(arr);
     })
   );
@@ -70,6 +83,9 @@ function convertToReceivingPlayers($: CheerioStatic): Observable<ReceivingPlayer
         const p = new ReceivingPlayer();
         p.convert(jsonObj);
         arr.push(p);
+      }
+      if (arr.length === 0) {
+        writeLine('No receiving players found.');
       }
       return of(arr);
     })
