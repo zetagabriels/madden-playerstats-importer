@@ -1,3 +1,4 @@
+import * as path from 'path';
 import getopts from 'getopts';
 import getAllPlayers from './import';
 
@@ -7,11 +8,17 @@ function main(): void {
     alias: {
       help: 'h',
       year: 'y',
+      format: 'f',
+      path: 'p',
     },
     default: {
-      year: new Date().getFullYear() - 1
+      year: new Date().getFullYear() - 1,
+      format: 'json',
+      path: path.join(__dirname, '../temp/')
     },
   });
 
   const players = getAllPlayers(opts.year);
 }
+
+main();

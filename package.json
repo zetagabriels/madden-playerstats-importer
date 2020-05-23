@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "tsc && node ./js/main.js",
     "import": "tsc && node ./js/import.js",
     "export": "tsc && node ./js/export.js"
   },

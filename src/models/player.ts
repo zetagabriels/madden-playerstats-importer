@@ -11,7 +11,7 @@ export default abstract class Player implements IPlayer {
     this.name = json.player;
     this.team = json.team;
     this.position = json.pos;
-    this.gamesPlayed = json.g;
-    this.gamesStarted = json.gs;
+    this.gamesPlayed = json.g || 0;
+    this.gamesStarted = json.gs || 0;
   }
 }

@@ -1,9 +1,9 @@
 Passing:
-    Player
-    Team
-    Pos
-    G
-    GS
+    *Player
+    *Team
+    *Pos
+    *G
+    *GS
     Cmp
     Att
     Yds
@@ -15,11 +15,11 @@ Passing:
     4QC
 
 Defense:
-    Player
-    Team
-    Pos
-    G
-    Gs
+    *Player
+    *Team
+    *Pos
+    *G
+    *Gs
     Int
     Def_Int_Yds
     TD
@@ -35,11 +35,11 @@ Defense:
     Sfty
 
 Rushing:
-    Player
-    Tm
-    Pos
-    G
-    GS
+    *Player
+    *Tm
+    *Pos
+    *G
+    *GS
     Att
     Yds
     TD
@@ -48,11 +48,11 @@ Rushing:
     Fmb
 
 Receiving:
-    Player
-    Tm
-    Pos
-    G
-    Gs
+    *Player
+    *Tm
+    *Pos
+    *G
+    *Gs
     Rec
     Yds
     TD

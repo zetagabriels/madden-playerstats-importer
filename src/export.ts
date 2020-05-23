@@ -1,3 +1,4 @@
+import * as path from 'path';
 import getopts from 'getopts';
 import Player from './models/player';
 
@@ -11,11 +12,13 @@ function main(): void {
     alias: {
       help: 'h',
       format: 'f',
+      path: 'p',
     },
     default: {
-      format: 'json'
-    },
+      format: 'json',
+      path: path.join(__dirname, '../temp/')
+    }
   });
-
-
 }
+
+main();

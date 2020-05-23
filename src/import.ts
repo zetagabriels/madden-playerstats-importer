@@ -5,7 +5,7 @@ import { getPassingPlayers, getDefensePlayers, getReceivingPlayers, getRushingPl
 import { from, Observable } from 'rxjs';
 import { mergeAll, map } from 'rxjs/operators';
 import Player from './models/player';
-import { writeLine } from './helpers';
+import { writeLine, checkOrCreatePath, write } from './helpers';
 
 export default function getAllPlayers(year: number | string): Observable<Player[]> {
   const observables: Observable<Player[]>[] = [getPassingPlayers(year), getRushingPlayers(year),
@@ -19,11 +19,22 @@ function main(): void {
     alias: {
       help: 'h',
       year: 'y',
+      path: 'p',
     },
     default: {
-      year: new Date().getFullYear() - 1
+      year: new Date().getFullYear() - 1,
+      path: '../temp/',
     },
   });
+
+  const filePath = path.join(__dirname, opts.path);
+
+  try {
+    checkOrCreatePath(filePath);
+  } catch {
+    writeLine(`ERROR! Could not create directory ${filePath}.`);
+    process.exit(1);
+  }
 
   writeLine(`Now retrieving all players for year ${opts.year}...`);
 
@@ -33,7 +44,7 @@ function main(): void {
     map((ps: Player[]) => {
       if (ps.length === 0) return;
 
-      const writePath = path.join(__dirname, `../temp/players-${i}.json`);
+      const writePath = path.join(filePath, `players-${i}.json`);
       writeLine(`Retrieved ${i + 1} of 4 OK`);
       fs.writeFileSync(writePath, JSON.stringify(ps));
       writeLine(`Wrote to ${writePath}`);
