@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
@@ -21,19 +20,36 @@ namespace MaddenImporter
 				var json = "{";
 				foreach (var td in children)
 				{
+					// this part is nastier than my ex wife
+					// pls ignore i swear to god it works
 					var name = td.GetAttribute("data-stat").ToLower();
 					string strValue = string.Empty;
 					int? intValue = null;
+					float? floatValue = null;
 					try
 					{
 						intValue = int.Parse(td.TextContent);
 					}
 					catch
 					{
-						strValue = $"\"{td.TextContent}\"";
+						try
+						{
+							floatValue = float.Parse(td.TextContent);
+						}
+						catch
+						{
+							strValue = $"\"{td.TextContent}\"";
+							if (string.IsNullOrEmpty(td.TextContent))
+							{
+								if (name == "pos")
+									strValue = "\"N/A\"";
+								else
+									intValue = 0;
+							}
+						}
 					}
 
-					json += $"\"{name}\": {intValue?.ToString() ?? strValue},";
+					json += $"\"{name}\": {intValue?.ToString() ?? floatValue?.ToString() ?? strValue},";
 				}
 				json = json.Substring(0, json.Length - 1);
 				json += "}";
@@ -45,9 +61,15 @@ namespace MaddenImporter
 
 		public static async Task<IEnumerable<Player>> GetAllPlayers(int year)
 		{
-			var players = await GetPlayersJson(year, PlayerType.Receiving);
+			IEnumerable<Player> players = new List<Player>();
+			var types = new PlayerType[] { PlayerType.Defense, PlayerType.Passing, PlayerType.Receiving, PlayerType.Rushing };
+			foreach (var enumType in types)
+			{
+				var retrieved = await GetPlayersJson(year, enumType);
+				players = players.Concat(retrieved.Select(p => enumType.ConvertFromJson(p)));
+			}
 
-			return players.Select(p => Extensions.ConvertFromJson<ReceivingPlayer>(p));
+			return players;
 		}
 	}
 }
