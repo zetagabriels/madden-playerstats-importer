@@ -4,43 +4,16 @@ hey football nerds here's some code for you
 
 .exe and .sh versions coming soon but for now you'll need node
 
-## Importing
+## Retrieving
 
-To import:
-
-```bash
-npm run import
-```
-
-### Import options
-
-You will need to add `--` after the `npm run import` statement.
+First build it with
 
 ```bash
- -y, --year     the year to retrieve data from
- -p, --path     the path to save files to (absolute or relative)
+dotnet build
 ```
 
-#### Example
+then do some other stuff iunno i use linux standby for windows and mac instructions
+i'll have .exe files in the dist/ folder eventually
+get off my back
 
-To retrieve all player stats from the year 2015:
-
-```bash
-npm run import -- -y 2015
-```
-
-## Exporting
-
-To export:
-
-```bash
-npm run export
-```
-
-### Export options
-
-You will need to add `--` after the `npm run export` statement.
-
-```bash
- -f, --format   the format of the file that contains the season stats
-```
+I have VSCode commands set up for publishing on all three platforms. Get x64 losers

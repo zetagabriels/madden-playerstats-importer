@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/c-sharp/maddenimporter.csproj",
+                "${workspaceFolder}/maddenimporter.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -18,16 +18,31 @@
             }
         },
         {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/c-sharp/maddenimporter.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+            "label": "Publish Windows",
+            "type": "shell",
+            "command": "dotnet publish -c Release -o dist/win-x64/ --self-contained -r win10-x64",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish OSX",
+            "type": "shell",
+            "command": "dotnet publish -c Release -o dist/osx/ --self-contained -r osx-x64",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish Linux",
+            "type": "shell",
+            "command": "dotnet publish -c Release -o dist/linux/ --self-contained -r linux-x64",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish",
+            "dependsOn": [
+                "Publish Windows",
+                "Publish OSX",
+                "Publish Linux"
             ],
-            "problemMatcher": "$msCompile"
+            "dependsOrder": "sequence"
         },
         {
             "label": "watch",
@@ -36,7 +51,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/c-sharp/maddenimporter.csproj",
+                "${workspaceFolder}/maddenimporter.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

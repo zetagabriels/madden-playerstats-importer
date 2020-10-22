@@ -14,7 +14,6 @@ namespace MaddenImporter
 			}
 
 			var players = Retriever.GetAllPlayers(year).GetAwaiter().GetResult();
-			//System.Console.WriteLine(players.Count());
 			players.ToList().ForEach(p => Console.WriteLine($"{p.Name} from {p.Team}"));
 		}
 	}
