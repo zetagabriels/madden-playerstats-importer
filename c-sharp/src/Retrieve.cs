@@ -14,7 +14,6 @@ namespace MaddenImporter
 			var url = Extensions.GenerateUrl(year, playerType);
 			var browser = AngleSharp.BrowsingContext.New(config);
 			var document = await browser.OpenAsync(url);
-			Console.WriteLine(document == null);
 			var jsons = document.QuerySelectorAll("tbody > tr:not(.thead)")
 			.Select(el => el.Children)
 			.Select(children =>
@@ -38,19 +37,17 @@ namespace MaddenImporter
 				}
 				json = json.Substring(0, json.Length - 1);
 				json += "}";
-				Console.WriteLine(json);
 				return json;
 			})
 			.ToList();
 			return jsons;
 		}
 
-		public static async Task<List<Player>> GetAllPlayers(int year)
+		public static async Task<IEnumerable<Player>> GetAllPlayers(int year)
 		{
-			await GetPlayersJson(year, PlayerType.Receiving);
+			var players = await GetPlayersJson(year, PlayerType.Receiving);
 
-			var p = Extensions.ConvertFromJson<DefensePlayer>("{\"name\": \"Brian Urlacher\"}");
-			return new List<Player> { p };
+			return players.Select(p => Extensions.ConvertFromJson<ReceivingPlayer>(p));
 		}
 	}
 }
