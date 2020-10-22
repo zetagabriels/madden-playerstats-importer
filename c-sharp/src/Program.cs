@@ -12,8 +12,7 @@ namespace MaddenImporter
 				int.TryParse(args[0], out year);
 			}
 
-			Console.WriteLine("Hello World!");
-			var players = Retriever.GetAllPlayers(year);
+			var players = Retriever.GetAllPlayers(year).GetAwaiter().GetResult();
 		}
 	}
 }
