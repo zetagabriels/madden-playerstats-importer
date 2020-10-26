@@ -23,9 +23,9 @@ namespace MaddenImporter
             });
         }
 
-        public static IEnumerable<T> GetPlayersOfType<T>(List<Player> players) where T : Player
+        public static List<T> GetPlayersOfType<T>(List<Player> players) where T : Player
         {
-            return players.Where(p => p.GetType() == typeof(T)).Select(p => (T)p);
+            return players.Where(p => p is T).Select(p => (T)p).ToList();
         }
 
         private static void WritePlayerList<T>(string path, string filePrefix, List<T> players) where T : Player
@@ -35,12 +35,12 @@ namespace MaddenImporter
 
         public static void WritePlayersList(string path, List<Player> players)
         {
-            WritePlayerList(path, "passing", GetPlayersOfType<PassingPlayer>(players).ToList());
-            WritePlayerList(path, "defense", GetPlayersOfType<DefensePlayer>(players).ToList());
-            WritePlayerList(path, "kicking", GetPlayersOfType<KickingPlayer>(players).ToList());
-            WritePlayerList(path, "rushing", GetPlayersOfType<RushingPlayer>(players).ToList());
-            WritePlayerList(path, "receiving", GetPlayersOfType<ReceivingPlayer>(players).ToList());
-            WritePlayerList(path, "returning", GetPlayersOfType<ReturningPlayer>(players).ToList());
+            WritePlayerList(path, "passing", GetPlayersOfType<PassingPlayer>(players));
+            WritePlayerList(path, "defense", GetPlayersOfType<DefensePlayer>(players));
+            WritePlayerList(path, "kicking", GetPlayersOfType<KickingPlayer>(players));
+            WritePlayerList(path, "rushing", GetPlayersOfType<RushingPlayer>(players));
+            WritePlayerList(path, "receiving", GetPlayersOfType<ReceivingPlayer>(players));
+            WritePlayerList(path, "returning", GetPlayersOfType<ReturningPlayer>(players));
         }
 
         // This is ass but that's how it is on this bitch of an earth
@@ -56,7 +56,7 @@ namespace MaddenImporter
             dirtyJson = dirtyJson.Replace("rec_td", "LongestReception");
             dirtyJson = dirtyJson.Replace("rec_first_down", "FirstDowns");
             dirtyJson = dirtyJson.Replace("rec_long", "LongestReception");
-            dirtyJson = dirtyJson.Replace("cmp", "Completions");
+            dirtyJson = dirtyJson.Replace("\"cmp\"", "\"Completions\"");
             dirtyJson = dirtyJson.Replace("pass_att", "AttemptedPasses");
             dirtyJson = dirtyJson.Replace("pass_td", "PassingTouchdowns");
             dirtyJson = dirtyJson.Replace("pass_int", "Interceptions");

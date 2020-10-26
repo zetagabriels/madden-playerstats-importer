@@ -19,7 +19,6 @@ namespace MaddenImporter
 
             var players = await Retriever.GetAllPlayers(year);
             Extensions.WritePlayersList(path, players.ToList());
-            //players.ToList().ForEach(Console.WriteLine);
         }
     }
 }
