@@ -6,6 +6,7 @@ namespace MaddenImporter.Excel
     {
         static void Main(string[] args)
         {
+            
         }
     }
 }
