@@ -1,6 +1,9 @@
 using static System.IO.Directory;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Linq;
+using System.Collections.Generic;
+using System;
 
 namespace MaddenImporter
 {
@@ -15,9 +18,29 @@ namespace MaddenImporter
                 if (!Exists(path))
                 {
                     CreateDirectory(path);
-                    System.Console.WriteLine($"Created directory {path}.");
+                    System.Console.WriteLine($"Created directory {path}");
                 }
             });
+        }
+
+        public static IEnumerable<T> GetPlayersOfType<T>(List<Player> players) where T : Player
+        {
+            return players.Where(p => p.GetType() == typeof(T)).Select(p => (T)p);
+        }
+
+        private static void WritePlayerList<T>(string path, string filePrefix, List<T> players) where T : Player
+        {
+            System.IO.File.WriteAllText(path + $"/{filePrefix}.players.json", JsonSerializer.Serialize(players));
+        }
+
+        public static void WritePlayersList(string path, List<Player> players)
+        {
+            WritePlayerList(path, "passing", GetPlayersOfType<PassingPlayer>(players).ToList());
+            WritePlayerList(path, "defense", GetPlayersOfType<DefensePlayer>(players).ToList());
+            WritePlayerList(path, "kicking", GetPlayersOfType<KickingPlayer>(players).ToList());
+            WritePlayerList(path, "rushing", GetPlayersOfType<RushingPlayer>(players).ToList());
+            WritePlayerList(path, "receiving", GetPlayersOfType<ReceivingPlayer>(players).ToList());
+            WritePlayerList(path, "returning", GetPlayersOfType<ReturningPlayer>(players).ToList());
         }
 
         // This is ass but that's how it is on this bitch of an earth

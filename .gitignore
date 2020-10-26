@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 dist/
-node_modules/
+temp/
 
 # User-specific files
 *.rsuser
