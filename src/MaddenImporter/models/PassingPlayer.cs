@@ -1,4 +1,4 @@
-namespace MaddenImporter
+namespace MaddenImporter.Models.Player
 {
     public class PassingPlayer : Player
     {

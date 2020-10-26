@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using System;
+using MaddenImporter.Models.Player;
 
 namespace MaddenImporter
 {
