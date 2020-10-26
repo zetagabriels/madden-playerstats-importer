@@ -1,27 +1,25 @@
 # Madden Player Stats Importer
 
-hey football nerds here's some code for you
-
-.exe and .sh versions coming soon but for now you'll need node
+A way to automate the career and season stats for Madden '20.
 
 ## Retrieving
 
 ### From source
 
+To write to a series of JSON files, use
+
 ```bash
-dotnet run [year]
+dotnet run -p MaddenImporter/ [year]
+```
+
+JSON contains information that is not present in the Excel spreadsheets.
+
+If you want to save the data as Excel files instead, use
+
+```bash
+dotnet run -p MaddenImporter.Excel/ [year]
 ```
 
 ### From dist
 
-First build it with
-
-```bash
-dotnet build
-```
-
-then do some other stuff iunno i use linux standby for windows and mac instructions
-i'll have .exe files in the dist/ folder eventually
-get off my back
-
-I have VSCode commands set up for publishing on all three platforms. Get x64 losers
+The executable file for your operating system can be found in the [dist folder](dist/). We support Windows x64, macOS x64, and Linux x64. We may have a Linux ARM build eventually for people who want to run this on a server and automate the process further.
