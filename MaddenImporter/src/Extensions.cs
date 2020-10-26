@@ -57,6 +57,7 @@ namespace MaddenImporter
             dirtyJson = dirtyJson.Replace("rec_first_down", "FirstDowns");
             dirtyJson = dirtyJson.Replace("rec_long", "LongestReception");
             dirtyJson = dirtyJson.Replace("\"cmp\"", "\"Completions\"");
+            dirtyJson = dirtyJson.Replace("pass_cmp", "Completions");
             dirtyJson = dirtyJson.Replace("pass_att", "AttemptedPasses");
             dirtyJson = dirtyJson.Replace("pass_td", "PassingTouchdowns");
             dirtyJson = dirtyJson.Replace("pass_int", "Interceptions");
