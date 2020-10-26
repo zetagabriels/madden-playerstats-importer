@@ -1,10 +1,12 @@
 namespace MaddenImporter
 {
-    public enum PlayerType: byte
+    public enum PlayerType : byte
     {
         Passing,
         Rushing,
         Defense,
-        Receiving
+        Receiving,
+        Returns,
+        Kicking
     }
 }

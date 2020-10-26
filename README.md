@@ -6,6 +6,14 @@ hey football nerds here's some code for you
 
 ## Retrieving
 
+### From source
+
+```bash
+dotnet run [year]
+```
+
+### From dist
+
 First build it with
 
 ```bash
