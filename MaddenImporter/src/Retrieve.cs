@@ -11,7 +11,7 @@ namespace MaddenImporter
         private static async Task<List<string>> GetPlayersJson(int year, PlayerType playerType)
         {
             var config = AngleSharp.Configuration.Default.WithDefaultLoader();
-            var url = Extensions.GetYearlyUrl(year, playerType);
+            var url = Extensions.GetSeasonUrl(year, playerType);
             var browser = AngleSharp.BrowsingContext.New(config);
             var document = await browser.OpenAsync(url);
             var jsons = document.QuerySelectorAll("tbody > tr:not(.thead)")

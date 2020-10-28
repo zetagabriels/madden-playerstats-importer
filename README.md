@@ -22,4 +22,4 @@ dotnet run -p MaddenImporter.Excel/ [year]
 
 ### From dist
 
-The executable file for your operating system can be found in the [dist folder](dist/). We support Windows x64, macOS x64, and Linux x64. We may have a Linux ARM build eventually for people who want to run this on a server and automate the process further.
+The executable file for your operating system can be found in the [dist/ folder](dist/). We support Windows x64, macOS x64, and Linux x64. We may have a Linux ARM build eventually for people who want to run this on a server and automate the process further.

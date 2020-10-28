@@ -19,8 +19,13 @@ namespace MaddenImporter.Excel
             var workbook = new ClosedXML.Excel.XLWorkbook();
             var players = (await MaddenImporter.Retriever.GetAllPlayers(year)).ToList();
             ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
+            ExcelExtensions.WritePlayerSheet<RushingPlayer>(workbook, Extensions.GetPlayersOfType<RushingPlayer>(players));
+            ExcelExtensions.WritePlayerSheet<DefensePlayer>(workbook, Extensions.GetPlayersOfType<DefensePlayer>(players));
+            ExcelExtensions.WritePlayerSheet<ReturningPlayer>(workbook, Extensions.GetPlayersOfType<ReturningPlayer>(players));
+            ExcelExtensions.WritePlayerSheet<KickingPlayer>(workbook, Extensions.GetPlayersOfType<KickingPlayer>(players));
+            ExcelExtensions.WritePlayerSheet<ReceivingPlayer>(workbook, Extensions.GetPlayersOfType<ReceivingPlayer>(players));
 
-            workbook.SaveAs(path + "/passing.players.xlsx");
+            workbook.SaveAs(path + "/players.xlsx");
             workbook.Dispose();
         }
     }
