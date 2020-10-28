@@ -62,6 +62,7 @@ namespace MaddenImporter
             TryAddKeyValuePair("Receptions", "rec");
             TryAddKeyValuePair("LongestReception", "rec_long");
             TryAddKeyValuePair("ReceivingTouchdowns", "rec_td");
+            TryAddKeyValuePair("YardsReceived", "rec_yds");
             TryAddKeyValuePair("Fumbles", "fumbles");
             TryAddKeyValuePair("FirstDowns", "rec_first_down");
             TryAddKeyValuePair("Completions", "cmp");
@@ -76,6 +77,7 @@ namespace MaddenImporter
             TryAddKeyValuePair("FourthQuarterCombacks", "comebacks");
             TryAddKeyValuePair("RushAttempts", "rush_att");
             TryAddKeyValuePair("RushingYards", "rush_yds");
+            TryAddKeyValuePair("RushTouchdowns", "rush_td");
             TryAddKeyValuePair("FirstDowns", "rush_first_down");
             TryAddKeyValuePair("LongestRush", "rush_long");
             TryAddKeyValuePair("Interceptions", "def_int");
@@ -83,7 +85,7 @@ namespace MaddenImporter
             TryAddKeyValuePair("InterceptionTouchdowns", "def_int_td");
             TryAddKeyValuePair("LongestInterceptionReturn", "def_int_long");
             TryAddKeyValuePair("PassesDefended", "pass_defended");
-            TryAddKeyValuePair("ForcedFumbles", "fumbles_forces");
+            TryAddKeyValuePair("ForcedFumbles", "fumbles_forced");
             TryAddKeyValuePair("FumblesRecovered", "fumbles_rec");
             TryAddKeyValuePair("FumbleYards", "fumbles_rec_yds");
             TryAddKeyValuePair("FumbleTouchdowns", "fumbles_rec_td");
