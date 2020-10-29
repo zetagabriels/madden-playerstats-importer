@@ -14,9 +14,15 @@
             "problemMatcher": "$msCompile",
         },
         {
-            "label": "Publish Linux",
+            "label": "Publish Linux x64",
             "type": "shell",
-            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux/ -r linux-x64 ${workspaceFolder}/MaddenImporter.Excel/",
+            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux-x64/ -r linux-x64 ${workspaceFolder}/MaddenImporter.Excel/",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish Linux ARM",
+            "type": "shell",
+            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux-arm/ -r linux-arm ${workspaceFolder}/MaddenImporter.Excel/",
             "problemMatcher": "$msCompile",
         },
         {
@@ -24,7 +30,8 @@
             "dependsOn": [
                 "Publish Windows",
                 "Publish OSX",
-                "Publish Linux"
+                "Publish Linux x64",
+                "Publish Linux ARM"
             ],
             "dependsOrder": "sequence"
         },
