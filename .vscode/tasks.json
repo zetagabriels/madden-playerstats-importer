@@ -2,37 +2,21 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/maddenimporter.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
             "label": "Publish Windows",
             "type": "shell",
-            "command": "dotnet publish -c Release -o dist/win-x64/ --self-contained -r win10-x64",
+            "command": "dotnet publish --self-contained false -c Release -o dist/win-x64/ -r win10-x64 ${workspaceFolder}/MaddenImporter.Excel/",
             "problemMatcher": "$msCompile",
         },
         {
             "label": "Publish OSX",
             "type": "shell",
-            "command": "dotnet publish -c Release -o dist/osx/ --self-contained -r osx-x64",
+            "command": "dotnet publish --self-contained false -c Release -o dist/osx/ -r osx-x64 ${workspaceFolder}/MaddenImporter.Excel/",
             "problemMatcher": "$msCompile",
         },
         {
             "label": "Publish Linux",
             "type": "shell",
-            "command": "dotnet publish -c Release -o dist/linux/ --self-contained -r linux-x64",
+            "command": "dotnet publish --self-contained false -c Release -o dist/linux/ -r linux-x64 ${workspaceFolder}/MaddenImporter.Excel/",
             "problemMatcher": "$msCompile",
         },
         {
