@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Publish Windows",
+            "type": "shell",
+            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/win-x64/ -r win10-x64 ${workspaceFolder}/MaddenImporter.Excel/",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish OSX",
+            "type": "shell",
+            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/osx/ -r osx-x64 ${workspaceFolder}/MaddenImporter.Excel/",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish Linux x64",
+            "type": "shell",
+            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux-x64/ -r linux-x64 ${workspaceFolder}/MaddenImporter.Excel/",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish Linux ARM",
+            "type": "shell",
+            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux-arm/ -r linux-arm ${workspaceFolder}/MaddenImporter.Excel/",
+            "problemMatcher": "$msCompile",
+        },
+        {
+            "label": "Publish",
+            "dependsOn": [
+                "Publish Windows",
+                "Publish OSX",
+                "Publish Linux x64",
+                "Publish Linux ARM"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "${workspaceFolder}/maddenimporter.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
