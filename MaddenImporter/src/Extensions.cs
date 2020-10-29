@@ -32,7 +32,7 @@ namespace MaddenImporter
             System.IO.File.WriteAllText(path + $"/{filePrefix}.players.json", JsonSerializer.Serialize(players));
         }
 
-        public static void WritePlayersList(string path, List<Player> players)
+        internal static void WritePlayersList(string path, List<Player> players)
         {
             WritePlayerList(path, "passing", GetPlayersOfType<PassingPlayer>(players));
             WritePlayerList(path, "defense", GetPlayersOfType<DefensePlayer>(players));
