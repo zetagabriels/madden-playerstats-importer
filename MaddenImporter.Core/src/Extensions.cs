@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using MaddenImporter.Models.Player;
 
-namespace MaddenImporter
+namespace MaddenImporter.Core
 {
     public static class Extensions
     {
@@ -43,7 +43,7 @@ namespace MaddenImporter
         }
 
         // This is ass but that's how it is on this bitch of an earth
-        private static string RemapKeys(string dirtyJson)
+        private static string RemapSeasonalKeys(string dirtyJson)
         {
             using var inputDoc = JsonDocument.Parse(dirtyJson);
             var json = inputDoc.RootElement;
@@ -51,7 +51,7 @@ namespace MaddenImporter
             void TryAddKeyValuePair(string keyName, string valueKeyName)
             {
                 var ok = json.TryGetProperty(valueKeyName, out var value);
-                if (ok) dict.Add(keyName, value);
+                if (ok) dict.TryAdd(keyName, value);
             }
 
             TryAddKeyValuePair("Name", "player");
@@ -109,7 +109,7 @@ namespace MaddenImporter
             return JsonSerializer.Serialize(dict);
         }
 
-        public static T ConvertFromJson<T>(string json) where T : Player => JsonSerializer.Deserialize<T>(RemapKeys(json));
+        public static T ConvertFromJson<T>(string json) where T : Player => JsonSerializer.Deserialize<T>(RemapSeasonalKeys(json));
 
         public static Player ConvertFromJson(this PlayerType type, string json)
         {

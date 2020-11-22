@@ -1,4 +1,4 @@
-namespace MaddenImporter
+namespace MaddenImporter.Core
 {
     public enum PlayerType : byte
     {

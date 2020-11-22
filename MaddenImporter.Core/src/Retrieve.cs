@@ -4,7 +4,7 @@ using System.Linq;
 using AngleSharp;
 using MaddenImporter.Models.Player;
 
-namespace MaddenImporter
+namespace MaddenImporter.Core
 {
     public static class Retriever
     {

@@ -10,7 +10,7 @@
     <PackageReference Include="ClosedXML" Version="0.95.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MaddenImporter\maddenimporter.csproj" />
+    <ProjectReference Include="..\MaddenImporter.Core\maddenimporter.core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MaddenImporter.Core;
 using MaddenImporter.Models.Player;
 
 namespace MaddenImporter.Excel
@@ -17,7 +18,7 @@ namespace MaddenImporter.Excel
             }
 
             var workbook = new ClosedXML.Excel.XLWorkbook();
-            var players = (await MaddenImporter.Retriever.GetAllPlayers(year)).ToList();
+            var players = (await Retriever.GetAllPlayers(year)).ToList();
             ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
             ExcelExtensions.WritePlayerSheet<RushingPlayer>(workbook, Extensions.GetPlayersOfType<RushingPlayer>(players));
             ExcelExtensions.WritePlayerSheet<DefensePlayer>(workbook, Extensions.GetPlayersOfType<DefensePlayer>(players));
