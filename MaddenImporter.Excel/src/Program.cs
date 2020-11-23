@@ -17,8 +17,9 @@ namespace MaddenImporter.Excel
                 int.TryParse(args[0], out year);
             }
 
+            var seasonalRetriever = new MaddenImporter.Core.SeasonalRetriever();
             var workbook = new ClosedXML.Excel.XLWorkbook();
-            var players = (await Retriever.GetAllPlayers(year)).ToList();
+            var players = (await seasonalRetriever.GetAllPlayers(year)).ToList();
             ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
             ExcelExtensions.WritePlayerSheet<RushingPlayer>(workbook, Extensions.GetPlayersOfType<RushingPlayer>(players));
             ExcelExtensions.WritePlayerSheet<DefensePlayer>(workbook, Extensions.GetPlayersOfType<DefensePlayer>(players));
