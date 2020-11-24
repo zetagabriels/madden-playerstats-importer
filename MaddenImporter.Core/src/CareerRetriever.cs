@@ -84,18 +84,11 @@ namespace MaddenImporter.Core
             {
                 var retrieved = await GetPlayersJson(enumType);
                 Console.WriteLine($"Retrieved {retrieved.Count()} {enumType} players.");
-                Console.WriteLine(retrieved.Last());
                 // for now. once we have an account, remove skip
                 players = players.Concat(retrieved.Skip(10).Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys)));
-                Console.WriteLine(players.Last());
             }
 
             return players;
-        }
-
-        private static string RemapCareerKeys(string dirtyJson)
-        {
-            return "";
         }
     }
 }
