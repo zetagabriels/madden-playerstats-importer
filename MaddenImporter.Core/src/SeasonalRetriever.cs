@@ -66,77 +66,10 @@ namespace MaddenImporter.Core
             {
                 var retrieved = await GetPlayersJson(year, enumType);
                 System.Console.WriteLine($"Retrieved {retrieved.Count()} {enumType} players.");
-                players = players.Concat(retrieved.Select(p => enumType.ConvertFromJson(p, RemapSeasonalKeys)));
+                players = players.Concat(retrieved.Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys)));
             }
 
             return players;
-        }
-
-        // This is ass but that's how it is on this bitch of an earth
-        private static string RemapSeasonalKeys(string dirtyJson)
-        {
-            using var inputDoc = System.Text.Json.JsonDocument.Parse(dirtyJson);
-            var json = inputDoc.RootElement;
-            var dict = new Dictionary<string, object>();
-            void TryAddKeyValuePair(string keyName, string valueKeyName)
-            {
-                var ok = json.TryGetProperty(valueKeyName, out var value);
-                if (ok) dict.TryAdd(keyName, value);
-            }
-
-            TryAddKeyValuePair("Name", "player");
-            TryAddKeyValuePair("Team", "team");
-            TryAddKeyValuePair("Position", "pos");
-            TryAddKeyValuePair("GamesPlayed", "g");
-            TryAddKeyValuePair("GamesStarted", "gs");
-            TryAddKeyValuePair("Receptions", "rec");
-            TryAddKeyValuePair("LongestReception", "rec_long");
-            TryAddKeyValuePair("ReceivingTouchdowns", "rec_td");
-            TryAddKeyValuePair("YardsReceived", "rec_yds");
-            TryAddKeyValuePair("Fumbles", "fumbles");
-            TryAddKeyValuePair("FirstDowns", "rec_first_down");
-            TryAddKeyValuePair("Completions", "cmp");
-            TryAddKeyValuePair("Completions", "pass_cmp");
-            TryAddKeyValuePair("AttemptedPasses", "pass_att");
-            TryAddKeyValuePair("PassingTouchdowns", "pass_td");
-            TryAddKeyValuePair("Interceptions", "pass_int");
-            TryAddKeyValuePair("FirstDowns", "pass_first_down");
-            TryAddKeyValuePair("PassingYards", "pass_yds");
-            TryAddKeyValuePair("LongestPass", "pass_long");
-            TryAddKeyValuePair("SacksTaken", "pass_sacked");
-            TryAddKeyValuePair("FourthQuarterCombacks", "comebacks");
-            TryAddKeyValuePair("RushAttempts", "rush_att");
-            TryAddKeyValuePair("RushingYards", "rush_yds");
-            TryAddKeyValuePair("RushTouchdowns", "rush_td");
-            TryAddKeyValuePair("FirstDowns", "rush_first_down");
-            TryAddKeyValuePair("LongestRush", "rush_long");
-            TryAddKeyValuePair("Interceptions", "def_int");
-            TryAddKeyValuePair("InterceptionYards", "def_int_yds");
-            TryAddKeyValuePair("InterceptionTouchdowns", "def_int_td");
-            TryAddKeyValuePair("LongestInterceptionReturn", "def_int_long");
-            TryAddKeyValuePair("PassesDefended", "pass_defended");
-            TryAddKeyValuePair("ForcedFumbles", "fumbles_forced");
-            TryAddKeyValuePair("FumblesRecovered", "fumbles_rec");
-            TryAddKeyValuePair("FumbleYards", "fumbles_rec_yds");
-            TryAddKeyValuePair("FumbleTouchdowns", "fumbles_rec_td");
-            TryAddKeyValuePair("Sacks", "sacks");
-            TryAddKeyValuePair("SoloTackles", "tackles_solo");
-            TryAddKeyValuePair("AssistedTackles", "tackles_assists");
-            TryAddKeyValuePair("TacklesForLoss", "tackles_loss");
-            TryAddKeyValuePair("Safety", "safety_md");
-            TryAddKeyValuePair("PuntAttempts", "punt");
-            TryAddKeyValuePair("PuntYards", "punt_yds");
-            TryAddKeyValuePair("FieldGoalsAttempted", "fga");
-            TryAddKeyValuePair("FieldGoalsMade", "fgm");
-            TryAddKeyValuePair("ExtraPointsAttempted", "xpa");
-            TryAddKeyValuePair("ExtraPointsMade", "xpm");
-            TryAddKeyValuePair("KickReturns", "kick_ret");
-            TryAddKeyValuePair("KickReturnYards", "kick_ret_yds");
-            TryAddKeyValuePair("KickReturnTouchdowns", "kick_ret_td");
-            TryAddKeyValuePair("PuntReturnAttempts", "punt_ret");
-            TryAddKeyValuePair("PuntReturnYards", "punt_ret_yds");
-            TryAddKeyValuePair("PuntReturnTouchdowns", "punt_ret_td");
-            return System.Text.Json.JsonSerializer.Serialize(dict);
         }
     }
 }
