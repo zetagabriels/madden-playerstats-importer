@@ -1,21 +1,18 @@
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
 using MaddenImporter.Models.Player;
+using AngleSharp;
 
 namespace MaddenImporter.Core
 {
     public static class Extensions
     {
-        internal static OpenQA.Selenium.IWebDriver GetDefaultBrowser()
+
+        internal static IBrowsingContext GetDefaultBrowser()
         {
-            /* TODO: replace this call with a check
-                Create a temp/ directory. If it exists and the geckodriver exists (appropriate to the platform), use it
-                Else, download it from Mozilla, and then use it
-            */
-            CheckOrCreatePath("./temp/");
-            return new OpenQA.Selenium.Firefox.FirefoxDriver("./temp/");
+            var config = AngleSharp.Configuration.Default.WithDefaultCookies().WithDefaultLoader();
+            return AngleSharp.BrowsingContext.New(config);
         }
 
         public static void CheckOrCreatePath(string path)
