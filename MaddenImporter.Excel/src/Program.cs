@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using MaddenImporter.Core;
 using MaddenImporter.Models.Player;
 
@@ -8,7 +7,7 @@ namespace MaddenImporter.Excel
 {
     public class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             int year = DateTime.Now.Year;
             string path = System.IO.Path.GetFullPath("./temp");
@@ -30,8 +29,21 @@ namespace MaddenImporter.Excel
             workbook.SaveAs(path + "/players.xlsx");
             workbook.Dispose(); */
 
-            var careerRetriever = new CareerRetriever();
-            var players = (await careerRetriever.GetAllPlayers()).ToList();
+            using var careerRetriever = new CareerRetriever();
+            string username = string.Empty;
+            string password = string.Empty;
+            if (System.IO.File.Exists("login.private"))
+            {
+                var data = System.IO.File.ReadAllLines("login.private");
+                if (data.Length < 2)
+                {
+                    System.Console.WriteLine("Login file exists, but username and password were not found.");
+                    throw new ArgumentException();
+                }
+                username = data[0].Trim();
+                password = data[1].Trim();
+            }
+            var players = careerRetriever.GetAllPlayers(username, password).ToList();
 
             var workbook = new ClosedXML.Excel.XLWorkbook();
             ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));

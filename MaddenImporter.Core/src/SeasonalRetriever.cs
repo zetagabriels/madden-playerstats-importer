@@ -1,16 +1,15 @@
-using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using MaddenImporter.Models.Player;
-using AngleSharp;
+using OpenQA.Selenium;
 
 namespace MaddenImporter.Core
 {
-    public class SeasonalRetriever
+    public class SeasonalRetriever : System.IDisposable
     {
-        private IBrowsingContext browser;
+        private IWebDriver browser;
 
-        public SeasonalRetriever(IBrowsingContext br = null)
+        public SeasonalRetriever(IWebDriver br = null)
         {
             browser = br ?? Extensions.GetDefaultBrowser();
         }
@@ -18,24 +17,22 @@ namespace MaddenImporter.Core
         private static string GetSeasonUrl(int year, PlayerType playerType) =>
         $"https://www.pro-football-reference.com/years/{year}/{playerType.ToString().ToLower()}.htm";
 
-        private async Task<IEnumerable<string>> GetPlayersJson(int year, PlayerType playerType)
+        private IEnumerable<string> GetPlayersJson(int year, PlayerType playerType)
         {
             var url = GetSeasonUrl(year, playerType);
-            var document = await browser.OpenAsync(url);
-            var jsons = document.QuerySelectorAll("tbody > tr:not(.thead)")
-            .Select(el => el.Children)
+            browser.Navigate().GoToUrl(url);
+            var jsons = browser.FindElements(By.CssSelector("tbody > tr:not(.thead)"))
+            .Select(el => el.FindElements(By.TagName("td")))
             .Select(children =>
             {
                 var json = "{";
                 foreach (var td in children)
                 {
-                    // this part is nastier than my ex wife
-                    // pls ignore i swear to god it works
                     var name = td.GetAttribute("data-stat").ToLower();
                     dynamic value;
-                    var intOk = int.TryParse(td.TextContent, out int @int);
-                    var floatOk = float.TryParse(td.TextContent, out float @float);
-                    var str = td.TextContent?.Trim();
+                    var intOk = int.TryParse(td.Text, out int @int);
+                    var floatOk = float.TryParse(td.Text, out float @float);
+                    var str = td.Text?.Trim();
                     if (intOk)
                         value = @int;
                     else if (floatOk)
@@ -57,19 +54,24 @@ namespace MaddenImporter.Core
             return jsons;
         }
 
-        public async Task<IEnumerable<Player>> GetAllPlayers(int year)
+        public IEnumerable<Player> GetAllPlayers(int year)
         {
             IEnumerable<Player> players = new List<Player>();
             var types = new PlayerType[] { PlayerType.Defense, PlayerType.Passing, PlayerType.Receiving,
             PlayerType.Rushing, PlayerType.Returns, PlayerType.Kicking };
             foreach (var enumType in types)
             {
-                var retrieved = await GetPlayersJson(year, enumType);
+                var retrieved = GetPlayersJson(year, enumType);
                 System.Console.WriteLine($"Retrieved {retrieved.Count()} {enumType} players.");
                 players = players.Concat(retrieved.Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys)));
             }
 
             return players;
+        }
+
+        public void Dispose()
+        {
+            browser?.Dispose();
         }
     }
 }

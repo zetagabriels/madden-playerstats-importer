@@ -1,15 +1,15 @@
-using AngleSharp;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 using MaddenImporter.Models.Player;
+using OpenQA.Selenium;
 
 namespace MaddenImporter.Core
 {
-    public class CareerRetriever
+    public class CareerRetriever : IDisposable
     {
-        private IBrowsingContext browser;
+        private IWebDriver browser;
+        private const string loginUrl = "https://stathead.com/users/login.cgi";
 
         private static readonly Dictionary<PlayerType, string> urlSuffix = new Dictionary<PlayerType, string>
         {
@@ -21,7 +21,7 @@ namespace MaddenImporter.Core
             { PlayerType.Rushing, "&order_by=rush_att&positions[]=qb&positions[]=rb&positions[]=wr&positions[]=te&cstat[1]=fumbles&ccomp[1]=gt&cval[1]=0" }
         };
 
-        public CareerRetriever(IBrowsingContext br = null)
+        public CareerRetriever(IWebDriver br = null)
         {
             browser = br ?? Extensions.GetDefaultBrowser();
         }
@@ -33,26 +33,31 @@ namespace MaddenImporter.Core
             return $"https://stathead.com/football/psl_finder.cgi?request=1&draft_slot_min=1&undrafted=E&draft_year_max={DateTime.Now.Year}&draft_pick_in_round=pick_overall&season_start=1&order_by_asc=0&conference=any&year_min=1995&draft_slot_max=500&match=combined&draft_positions[]=qb&draft_positions[]=rb&draft_positions[]=wr&draft_positions[]=te&draft_positions[]=e&draft_positions[]=t&draft_positions[]=g&draft_positions[]=c&draft_positions[]=ol&draft_positions[]=dt&draft_positions[]=de&draft_positions[]=dl&draft_positions[]=ilb&draft_positions[]=olb&draft_positions[]=lb&draft_positions[]=cb&draft_positions[]=s&draft_positions[]=db&draft_positions[]=k&draft_positions[]=p&year_max={DateTime.Now.Year}&season_end=-1&draft_year_min=1936&draft_type=B&is_active=Y&age_min=0&age_max=99&offset=0{suffix}";
         }
 
-        private async Task<IEnumerable<string>> GetPlayersJson(PlayerType playerType)
+        private IEnumerable<string> GetPlayersJson(PlayerType playerType)
         {
+            // pull data
             Extensions.PlayerPositions.TryGetValue(playerType, out string pos);
             var url = GetCareerUrl(playerType);
-            var document = await browser.OpenAsync(url);
-            var jsons = document.QuerySelectorAll("tbody > tr:not(.thead)")
-            .Select(el => el.Children)
-            .Select(children =>
+            browser.Navigate().GoToUrl(url);
+            Console.WriteLine($"Now retrieving {playerType} players.");
+            // TODO: how to paginate?
+            var playerRows = browser.FindElements(By.CssSelector("tbody > tr:not(.thead)"))
+            .Select(el => el.FindElements(By.TagName("td")));
+
+            int playerRowCount = playerRows.Count();
+            List<string> jsons = new List<string>();
+            foreach (var row in playerRows)
             {
+                int count = row.Count() - 1;
                 var json = "{";
-                // the first column is the "rank" based on the search ordering, which we don't care about
-                foreach (var td in children.Skip(1))
+                json += $"\"pos\": \"{pos}\",";
+                foreach (var td in row)
                 {
-                    // this part is nastier than my ex wife
-                    // pls ignore i swear to god it works
                     var name = td.GetAttribute("data-stat").ToLower();
                     dynamic value;
-                    var intOk = int.TryParse(td.TextContent, out int @int);
-                    var floatOk = float.TryParse(td.TextContent, out float @float);
-                    var str = td.TextContent?.Trim();
+                    var intOk = int.TryParse(td.Text, out int @int);
+                    var floatOk = float.TryParse(td.Text, out float @float);
+                    var str = td.Text?.Trim();
                     if (intOk)
                         value = @int;
                     else if (floatOk)
@@ -67,28 +72,40 @@ namespace MaddenImporter.Core
 
                     json += $"\"{name}\": {value.ToString()},";
                 }
-                json += $"\"pos\": \"{pos}\",";
                 json = json.Substring(0, json.Length - 1); // remove trailing comma
                 json += "}";
-                return json;
-            });
+                Console.Write($"Parsing... {--playerRowCount} {playerType} remaining\r");
+                jsons.Add(json);
+            }
+            // if playerRowCount == 100 and button exists, go to next page
             return jsons;
         }
 
-        public async Task<IEnumerable<Player>> GetAllPlayers()
+        public IEnumerable<Player> GetAllPlayers(string username, string password)
         {
             IEnumerable<Player> players = new List<Player>();
             var types = new PlayerType[] { PlayerType.Defense, PlayerType.Passing, PlayerType.Receiving,
             PlayerType.Rushing, PlayerType.Returns, PlayerType.Kicking };
+
+            // login
+            browser.Navigate().GoToUrl(loginUrl);
+            browser.FindElement(By.Id("username")).SendKeys(username);
+            browser.FindElement(By.Id("password")).SendKeys(password);
+            browser.FindElement(By.CssSelector("input[type=submit]")).Click();
+
             foreach (var enumType in types)
             {
-                var retrieved = await GetPlayersJson(enumType);
+                var retrieved = GetPlayersJson(enumType).Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys));
                 Console.WriteLine($"Retrieved {retrieved.Count()} {enumType} players.");
-                // for now. once we have an account, remove skip
-                players = players.Concat(retrieved.Skip(10).Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys)));
+                players = players.Concat(retrieved);
             }
 
             return players;
+        }
+
+        public void Dispose()
+        {
+            browser?.Dispose();
         }
     }
 }

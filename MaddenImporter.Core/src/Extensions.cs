@@ -3,28 +3,28 @@ using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
 using MaddenImporter.Models.Player;
-using AngleSharp;
 
 namespace MaddenImporter.Core
 {
     public static class Extensions
     {
-        internal static IBrowsingContext GetDefaultBrowser()
+        internal static OpenQA.Selenium.IWebDriver GetDefaultBrowser()
         {
-            var config = AngleSharp.Configuration.Default.WithDefaultLoader();
-            return AngleSharp.BrowsingContext.New(config);
+            /* TODO: replace this call with a check
+                Create a temp/ directory. If it exists and the geckodriver exists (appropriate to the platform), use it
+                Else, download it from Mozilla, and then use it
+            */
+            CheckOrCreatePath("./temp/");
+            return new OpenQA.Selenium.Firefox.FirefoxDriver("./temp/");
         }
 
-        public static async Task CheckOrCreatePath(string path)
+        public static void CheckOrCreatePath(string path)
         {
-            await Task.Run(() =>
+            if (!System.IO.Directory.Exists(path))
             {
-                if (!System.IO.Directory.Exists(path))
-                {
-                    System.IO.Directory.CreateDirectory(path);
-                    System.Console.WriteLine($"Created directory {path}");
-                }
-            });
+                System.IO.Directory.CreateDirectory(path);
+                System.Console.WriteLine($"Created directory {path}");
+            }
         }
 
         public static List<T> GetPlayersOfType<T>(List<Player> players) where T : Player => players.Where(p => p is T).Select(p => (T)p).ToList();
