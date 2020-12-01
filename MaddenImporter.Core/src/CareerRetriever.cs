@@ -4,13 +4,11 @@ using System.Linq;
 using MaddenImporter.Models.Player;
 using OpenQA.Selenium;
 using AngleSharp;
-using System.Threading.Tasks;
 
 namespace MaddenImporter.Core
 {
     public class CareerRetriever : IDisposable
     {
-        private IBrowsingContext browser;
         private IWebDriver driver;
         private const string loginUrl = "https://stathead.com/users/login.cgi";
 
@@ -24,12 +22,11 @@ namespace MaddenImporter.Core
             { PlayerType.Rushing, "&order_by=rush_att&positions[]=qb&positions[]=rb&positions[]=wr&positions[]=te&cstat[1]=fumbles&ccomp[1]=gt&cval[1]=0" }
         };
 
-        public CareerRetriever(IBrowsingContext br = null)
+        public CareerRetriever(string geckoPath, IBrowsingContext br = null)
         {
-            browser = br ?? Extensions.GetDefaultBrowser();
             var firefoxOptions = new OpenQA.Selenium.Firefox.FirefoxOptions();
             firefoxOptions.AddArgument("-headless");
-            driver = new OpenQA.Selenium.Firefox.FirefoxDriver("./temp", firefoxOptions);
+            driver = new OpenQA.Selenium.Firefox.FirefoxDriver(geckoPath, firefoxOptions);
         }
 
         private static string GetCareerUrl(PlayerType playerType, int offset)
@@ -117,6 +114,9 @@ namespace MaddenImporter.Core
 
         public IEnumerable<Player> GetAllPlayers(string username, string password)
         {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                throw new ArgumentNullException();
+
             IEnumerable<Player> players = new List<Player>();
             var types = new PlayerType[] { PlayerType.Defense, PlayerType.Passing, PlayerType.Receiving,
             PlayerType.Rushing, PlayerType.Returns, PlayerType.Kicking };
@@ -126,6 +126,15 @@ namespace MaddenImporter.Core
             driver.FindElement(By.Id("username")).SendKeys(username);
             driver.FindElement(By.Id("password")).SendKeys(password);
             driver.FindElement(By.CssSelector("input[type=submit]")).Click();
+
+            try
+            {
+                var error = driver.FindElement(By.CssSelector("div.error"));
+                if (error != null && error.Displayed)
+                    throw new ApplicationException();
+            }
+            // login OK
+            catch (NoSuchElementException) { }
 
             foreach (var enumType in types)
             {
@@ -140,7 +149,6 @@ namespace MaddenImporter.Core
 
         public void Dispose()
         {
-            browser?.Dispose();
             driver?.Dispose();
         }
     }

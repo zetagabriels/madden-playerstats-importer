@@ -9,16 +9,12 @@ namespace MaddenImporter.Excel
 {
     public class Program
     {
-        /// <summary>
-        /// Retrieves all player info and formats it for Madden 2020.
-        /// </summary>
-        /// <param name=""></param>
         static int Main(params string[] args)
         {
             RootCommand rootCommand = new RootCommand("Retrieves all player info and formats it for Madden 2020.")
             {
                 new Option<int>(
-                    "--year",
+                    new string[]{"--year", "-y"},
                     getDefaultValue: () => DateTime.Now.Year,
                     description: "For seasonal imports, sets the year to pull data from."
                 ),
@@ -29,17 +25,28 @@ namespace MaddenImporter.Excel
                 ),
                 new Option<string>(
                     "--path",
-                    getDefaultValue: () => "./temp",
-                    description: "The path to save to. Defaults to ./temp/"
+                    getDefaultValue: () => "./output",
+                    description: "The path to save to."
+                ),
+                new Option<string>(
+                    new string[]{"--username", "-u"},
+                    description: "For career imports, your stathead.com username."
+                ),
+                new Option<string>(
+                    new string[]{"--password", "-p"},
+                    description: "For career imports, your stathead.com password."
                 )
             };
 
-            rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create<int, bool, string>(ChooseImport);
+            rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create<int, bool, string, string, string>(ChooseImport);
             return rootCommand.InvokeAsync(args).Result;
         }
 
-        static async Task ChooseImport(int year, bool career, string path)
+        static async Task ChooseImport(int year, bool career, string path, string username, string password)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("...    Madden Importer v0.1    ...");
+            Console.ForegroundColor = ConsoleColor.White;
             path = System.IO.Path.GetFullPath(path);
             if (!career)
             {
@@ -52,7 +59,7 @@ namespace MaddenImporter.Excel
             {
                 Console.WriteLine("Beginning career import.");
                 Console.WriteLine($"\tSaving to path {path}");
-                CareerImport(path);
+                CareerImport(path, username, password);
             }
         }
 
@@ -72,11 +79,14 @@ namespace MaddenImporter.Excel
             workbook.Dispose();
         }
 
-        static void CareerImport(string path)
+        static void CareerImport(string path, string username, string password)
         {
-            using var careerRetriever = new CareerRetriever();
-            string username = string.Empty;
-            string password = string.Empty;
+            if (!System.IO.File.Exists("./geckodriver") && !System.IO.File.Exists("./geckodriver.exe"))
+            {
+                Console.WriteLine("\nGecko driver not found. Please download it from https://github.com/mozilla/geckodriver/releases and put it in this folder.");
+                Console.WriteLine("If you are a GNU/Linux user, you may need to run chmod +x geckodriver");
+                return;
+            }
             if (System.IO.File.Exists("login.private"))
             {
                 var data = System.IO.File.ReadAllLines("login.private");
@@ -85,24 +95,36 @@ namespace MaddenImporter.Excel
                     System.Console.WriteLine("Login file exists, but username and password were not found.");
                     throw new ArgumentException();
                 }
-                username = data[0].Trim();
-                password = data[1].Trim();
+                username ??= data[0].Trim();
+                password ??= data[1].Trim();
             }
 
-            var players = careerRetriever.GetAllPlayers(username, password).ToList();
+            try
+            {
+                using var careerRetriever = new CareerRetriever("./");
+                var players = careerRetriever.GetAllPlayers(username, password).ToList();
 
-            var workbook = new ClosedXML.Excel.XLWorkbook();
-            ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
-            ExcelExtensions.WritePlayerSheet<RushingPlayer>(workbook, Extensions.GetPlayersOfType<RushingPlayer>(players));
-            ExcelExtensions.WritePlayerSheet<DefensePlayer>(workbook, Extensions.GetPlayersOfType<DefensePlayer>(players));
-            ExcelExtensions.WritePlayerSheet<ReturningPlayer>(workbook, Extensions.GetPlayersOfType<ReturningPlayer>(players));
-            ExcelExtensions.WritePlayerSheet<KickingPlayer>(workbook, Extensions.GetPlayersOfType<KickingPlayer>(players));
-            ExcelExtensions.WritePlayerSheet<ReceivingPlayer>(workbook, Extensions.GetPlayersOfType<ReceivingPlayer>(players));
+                var workbook = new ClosedXML.Excel.XLWorkbook();
+                ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
+                ExcelExtensions.WritePlayerSheet<RushingPlayer>(workbook, Extensions.GetPlayersOfType<RushingPlayer>(players));
+                ExcelExtensions.WritePlayerSheet<DefensePlayer>(workbook, Extensions.GetPlayersOfType<DefensePlayer>(players));
+                ExcelExtensions.WritePlayerSheet<ReturningPlayer>(workbook, Extensions.GetPlayersOfType<ReturningPlayer>(players));
+                ExcelExtensions.WritePlayerSheet<KickingPlayer>(workbook, Extensions.GetPlayersOfType<KickingPlayer>(players));
+                ExcelExtensions.WritePlayerSheet<ReceivingPlayer>(workbook, Extensions.GetPlayersOfType<ReceivingPlayer>(players));
 
-            path += "/players-career.xlsx";
-            workbook.SaveAs(path);
-            Console.WriteLine($"Saved workbook to {path}");
-            workbook.Dispose();
+                path += "/players-career.xlsx";
+                workbook.SaveAs(path);
+                Console.WriteLine($"Saved workbook to {path}");
+                workbook.Dispose();
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine("You must provide a username and password, either through the command-line options, or in a login.private file in the same directory as the executable.");
+            }
+            catch (ApplicationException)
+            {
+                Console.WriteLine("Login failed. Check your username and password.\nMake sure you can log in with your own browser first.");
+            }
         }
     }
 }
