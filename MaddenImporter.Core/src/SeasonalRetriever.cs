@@ -21,12 +21,14 @@ namespace MaddenImporter.Core
         {
             var url = GetSeasonUrl(year, playerType);
             browser.Navigate().GoToUrl(url);
-            var jsons = browser.FindElements(By.CssSelector("tbody > tr:not(.thead)"))
-            .Select(el => el.FindElements(By.TagName("td")))
-            .Select(children =>
+            var playerRows = browser.FindElements(By.CssSelector("tbody > tr:not(.thead)"))
+            .Select(el => el.FindElements(By.TagName("td")));
+
+            List<string> jsons = new List<string>();
+            foreach (var row in playerRows)
             {
                 var json = "{";
-                foreach (var td in children)
+                foreach (var td in row)
                 {
                     var name = td.GetAttribute("data-stat").ToLower();
                     dynamic value;
@@ -49,8 +51,8 @@ namespace MaddenImporter.Core
                 }
                 json = json.Substring(0, json.Length - 1); // remove trailing comma
                 json += "}";
-                return json;
-            });
+                jsons.Add(json);
+            }
             return jsons;
         }
 
