@@ -110,7 +110,7 @@ namespace MaddenImporter.Core
 
         private AngleSharp.Html.Dom.IHtmlInputElement GetInputElement(AngleSharp.Html.Dom.IHtmlFormElement form, string name)
         {
-            return (AngleSharp.Html.Dom.IHtmlInputElement)form.Elements.First(x => ((AngleSharp.Html.Dom.IHtmlInputElement)x).Name == name);
+            return (AngleSharp.Html.Dom.IHtmlInputElement)form.Elements.First(x => x.Id == name);
         }
 
         public async Task<IEnumerable<Player>> GetAllPlayers(string username, string password)
@@ -122,10 +122,10 @@ namespace MaddenImporter.Core
             // login
             var document = await browser.OpenAsync(loginUrl);
             var form = document.Forms.First();
-            GetInputElement(form, "username").Value = username;
-            GetInputElement(form, "password").Value = password;
-            var document2 = await form.SubmitAsync();
-            document2.ToHtml();
+            GetInputElement(form, "username").SetAttribute("value", username);
+            GetInputElement(form, "password").SetAttribute("value", password);
+            document = await form.SubmitAsync();
+            System.IO.File.WriteAllText("./temp/file.html", document.ToHtml().ToString());
 
             foreach (var enumType in types)
             {
