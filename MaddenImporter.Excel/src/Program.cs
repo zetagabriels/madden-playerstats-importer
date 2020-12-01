@@ -52,7 +52,7 @@ namespace MaddenImporter.Excel
             {
                 Console.WriteLine("Beginning career import.");
                 Console.WriteLine($"\tSaving to path {path}");
-                await CareerImport(path);
+                CareerImport(path);
             }
         }
 
@@ -72,7 +72,7 @@ namespace MaddenImporter.Excel
             workbook.Dispose();
         }
 
-        static async Task CareerImport(string path)
+        static void CareerImport(string path)
         {
             using var careerRetriever = new CareerRetriever();
             string username = string.Empty;
@@ -89,7 +89,7 @@ namespace MaddenImporter.Excel
                 password = data[1].Trim();
             }
 
-            var players = (await careerRetriever.GetAllPlayers(username, password)).ToList();
+            var players = careerRetriever.GetAllPlayers(username, password).ToList();
 
             var workbook = new ClosedXML.Excel.XLWorkbook();
             ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
@@ -99,7 +99,9 @@ namespace MaddenImporter.Excel
             ExcelExtensions.WritePlayerSheet<KickingPlayer>(workbook, Extensions.GetPlayersOfType<KickingPlayer>(players));
             ExcelExtensions.WritePlayerSheet<ReceivingPlayer>(workbook, Extensions.GetPlayersOfType<ReceivingPlayer>(players));
 
-            workbook.SaveAs(path + "/players-career.xlsx");
+            path += "/players-career.xlsx";
+            workbook.SaveAs(path);
+            Console.WriteLine($"Saved workbook to {path}");
             workbook.Dispose();
         }
     }

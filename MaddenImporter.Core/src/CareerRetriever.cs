@@ -11,6 +11,7 @@ namespace MaddenImporter.Core
     public class CareerRetriever : IDisposable
     {
         private IBrowsingContext browser;
+        private IWebDriver driver;
         private const string loginUrl = "https://stathead.com/users/login.cgi";
 
         private static readonly Dictionary<PlayerType, string> urlSuffix = new Dictionary<PlayerType, string>
@@ -26,6 +27,9 @@ namespace MaddenImporter.Core
         public CareerRetriever(IBrowsingContext br = null)
         {
             browser = br ?? Extensions.GetDefaultBrowser();
+            var firefoxOptions = new OpenQA.Selenium.Firefox.FirefoxOptions();
+            firefoxOptions.AddArgument("-headless");
+            driver = new OpenQA.Selenium.Firefox.FirefoxDriver("./temp", firefoxOptions);
         }
 
         private static string GetCareerUrl(PlayerType playerType, int offset)
@@ -68,25 +72,28 @@ namespace MaddenImporter.Core
                 json = json.Substring(0, json.Length - 1); // remove trailing comma
                 json += "}";
                 jsons.Add(json);
+                Console.Write($"\rParsing... {--playerRowCount} remaining.");
             }
             return jsons;
         }
 
-
-        private async Task<IEnumerable<string>> GetPlayersJson(PlayerType playerType)
+        private IEnumerable<string> GetPlayersJson(PlayerType playerType)
         {
             // pull data
             int offset = 0;
             Extensions.PlayerPositions.TryGetValue(playerType, out string pos);
             var url = GetCareerUrl(playerType, offset);
-            var document = await browser.OpenAsync(url);
+            driver.Navigate().GoToUrl(url);
             Console.WriteLine($"Now retrieving {playerType} players.");
             int playerRowCount = 0;
             List<string> jsons = new List<string>();
             bool paginate = true;
+            var parser = new AngleSharp.Html.Parser.HtmlParser();
 
             do
             {
+                var html = driver.PageSource;
+                var document = parser.ParseDocument(html);
                 var playerRows = document.QuerySelectorAll("tbody > tr:not(.thead)")
                 .Select(el => el.Children.ToList());
 
@@ -101,37 +108,29 @@ namespace MaddenImporter.Core
                     Console.WriteLine();
                     Console.WriteLine("Going to next page...");
                     url = GetCareerUrl(playerType, offset);
-                    await browser.OpenAsync(url);
+                    driver.Navigate().GoToUrl(url);
                 }
             } while (paginate);
 
             return jsons;
         }
 
-        private AngleSharp.Html.Dom.IHtmlInputElement GetInputElement(AngleSharp.Html.Dom.IHtmlFormElement form, string name)
-        {
-            return (AngleSharp.Html.Dom.IHtmlInputElement)form.Elements.First(x => x.Id == name);
-        }
-
-        public async Task<IEnumerable<Player>> GetAllPlayers(string username, string password)
+        public IEnumerable<Player> GetAllPlayers(string username, string password)
         {
             IEnumerable<Player> players = new List<Player>();
             var types = new PlayerType[] { PlayerType.Defense, PlayerType.Passing, PlayerType.Receiving,
             PlayerType.Rushing, PlayerType.Returns, PlayerType.Kicking };
 
             // login
-            var document = await browser.OpenAsync(loginUrl);
-            var form = document.Forms.First();
-            GetInputElement(form, "username").SetAttribute("value", username);
-            GetInputElement(form, "password").SetAttribute("value", password);
-            document = await form.SubmitAsync();
-            System.IO.File.WriteAllText("./temp/file.html", document.ToHtml().ToString());
+            driver.Navigate().GoToUrl(loginUrl);
+            driver.FindElement(By.Id("username")).SendKeys(username);
+            driver.FindElement(By.Id("password")).SendKeys(password);
+            driver.FindElement(By.CssSelector("input[type=submit]")).Click();
 
             foreach (var enumType in types)
             {
-                var retrieved = await GetPlayersJson(enumType);
-                // still having issues logging in
-                var r = retrieved.Skip(10).Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys));
+                var retrieved = GetPlayersJson(enumType);
+                var r = retrieved.Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys));
                 Console.WriteLine($"Retrieved {retrieved.Count()} {enumType} players.");
                 players = players.Concat(r);
             }
@@ -142,6 +141,7 @@ namespace MaddenImporter.Core
         public void Dispose()
         {
             browser?.Dispose();
+            driver?.Dispose();
         }
     }
 }
