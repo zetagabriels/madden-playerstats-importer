@@ -132,6 +132,7 @@ namespace MaddenImporter.Excel
             WriteHeaders<T>(worksheet);
             for (int i = 0; i < players.Count; i++)
                 WritePlayer(worksheet, i + 4, players[i]);
+            Console.WriteLine($"Wrote Excel sheet {typeof(T)}.");
         }
     }
 }
