@@ -104,6 +104,7 @@ namespace MaddenImporter.Core
                     offset += 100;
                     Console.WriteLine();
                     Console.WriteLine("Going to next page...");
+                    
                     url = GetCareerUrl(playerType, offset);
                     driver.Navigate().GoToUrl(url);
                 }
