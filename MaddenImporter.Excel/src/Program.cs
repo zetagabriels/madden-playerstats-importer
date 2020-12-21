@@ -11,7 +11,8 @@ namespace MaddenImporter.Excel
     {
         static int Main(params string[] args)
         {
-            RootCommand rootCommand = new RootCommand("Retrieves all player info and formats it for Madden 2020.")
+            int endYear = 0; //Initialize endYear variable for use in --startYear option
+            RootCommand rootCommand = new RootCommand("Retrieves NFL Season/Career Player Stats and formats it for use with the Madden 2020 Franchise Editor.")
             {
                 new Option<int>(
                     new string[]{"--year", "-y"},
@@ -21,7 +22,7 @@ namespace MaddenImporter.Excel
                 new Option<bool>(
                     "--career",
                     getDefaultValue: () => false,
-                    description: "Whether or not to use a career import."
+                    description: "Whether or not to use a career import." 
                 ),
                 new Option<string>(
                     "--path",
@@ -35,14 +36,24 @@ namespace MaddenImporter.Excel
                 new Option<string>(
                     new string[]{"--password", "-p"},
                     description: "For career imports, your stathead.com password."
+                ),
+                new Option<int>(
+                    "--startYear",
+                    getDefaultValue: () => endYear - 25, //For example, if endYear is the default 2020, startYear would be 1995
+                    description: "For Career imports, set the year to start at."
+                ),
+                new Option<int>(
+                    "--endYear",
+                    getDefaultValue: () => DateTime.Now.Year,
+                    description: "For Career imports, set the year to end at."
                 )
             };
 
-            rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create<int, bool, string, string, string>(ChooseImport);
+            rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create<int, bool, string, string, string, int, int>(ChooseImport);
             return rootCommand.InvokeAsync(args).Result;
         }
 
-        static async Task ChooseImport(int year, bool career, string path, string username, string password)
+        static async Task ChooseImport(int year, bool career, string path, string username, string password, int startYear, int endYear)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("...    Madden Importer v0.1    ...");
@@ -50,16 +61,16 @@ namespace MaddenImporter.Excel
             path = System.IO.Path.GetFullPath(path);
             if (!career)
             {
-                Console.WriteLine($"Beginning seasonal import for year {year}.");
+                Console.WriteLine($"Beginning seasonal import for year {year}...");
                 Console.WriteLine($"\tSaving to path {path}");
                 await SeasonalImport(path, year);
             }
 
             if (career)
             {
-                Console.WriteLine("Beginning career import.");
+                Console.WriteLine("Beginning career import...");
                 Console.WriteLine($"\tSaving to path {path}");
-                CareerImport(path, username, password);
+                CareerImport(path, username, password, startYear, endYear);
             }
         }
 
@@ -79,7 +90,7 @@ namespace MaddenImporter.Excel
             workbook.Dispose();
         }
 
-        static void CareerImport(string path, string username, string password)
+        static void CareerImport(string path, string username, string password, int startYear, int endYear)
         {
             if (!System.IO.File.Exists("./geckodriver") && !System.IO.File.Exists("./geckodriver.exe"))
             {
@@ -102,7 +113,7 @@ namespace MaddenImporter.Excel
             try
             {
                 using var careerRetriever = new CareerRetriever("./");
-                var players = careerRetriever.GetAllPlayers(username, password).ToList();
+                var players = careerRetriever.GetAllPlayers(username, password, startYear, endYear).ToList();
 
                 var workbook = new ClosedXML.Excel.XLWorkbook();
                 ExcelExtensions.WritePlayerSheet<PassingPlayer>(workbook, Extensions.GetPlayersOfType<PassingPlayer>(players));
@@ -128,3 +139,4 @@ namespace MaddenImporter.Excel
         }
     }
 }
+
