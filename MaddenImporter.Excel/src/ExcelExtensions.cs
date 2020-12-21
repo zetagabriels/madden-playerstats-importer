@@ -28,22 +28,22 @@ namespace MaddenImporter.Excel
             switch (player)
             {
                 case PassingPlayer p1:
-                    values = new object[] { p1.Name, p1.Completions, p1.GamesPlayed, p1.AttemptedPasses, p1.PassingYards, p1.PassingTouchdowns, p1.Interceptions, p1.SacksTaken };
+                    values = new object[] { p1.Name, p1.Completions, p1.GamesPlayed, p1.AttemptedPasses, p1.PassingYards, p1.PassingTouchdowns, p1.Interceptions, p1.SacksTaken, p1.Team };
                     break;
                 case KickingPlayer p2:
-                    values = new object[] { p2.Name, p2.PuntAttempts, p2.GamesPlayed, p2.ExtraPointsMade, p2.ExtraPointsAttempted, p2.FieldGoalsMade, p2.FieldGoalsAttempted, p2.PuntYards };
+                    values = new object[] { p2.Name, p2.PuntAttempts, p2.GamesPlayed, p2.ExtraPointsMade, p2.ExtraPointsAttempted, p2.FieldGoalsMade, p2.FieldGoalsAttempted, p2.PuntYards, p2.Team };
                     break;
                 case DefensePlayer p3:
-                    values = new object[] { p3.Name, p3.Interceptions, p3.GamesPlayed, p3.Sacks, p3.SoloTackles, p3.AssistedTackles, p3.TacklesForLoss, p3.InterceptionTouchdowns, p3.PassesDefended, p3.FumblesRecovered, p3.FumbleYards, p3.FumbleTouchdowns, p3.ForcedFumbles };
+                    values = new object[] { p3.Name, p3.Interceptions, p3.GamesPlayed, p3.Sacks, p3.SoloTackles, p3.AssistedTackles, p3.TacklesForLoss, p3.InterceptionTouchdowns, p3.PassesDefended, p3.FumblesRecovered, p3.FumbleYards, p3.FumbleTouchdowns, p3.ForcedFumbles, p3.Team };
                     break;
                 case ReceivingPlayer p4:
-                    values = new object[] { p4.Name, p4.Receptions, p4.GamesPlayed, p4.YardsReceived, p4.ReceivingTouchdowns };
+                    values = new object[] { p4.Name, p4.Receptions, p4.GamesPlayed, p4.YardsReceived, p4.ReceivingTouchdowns, p4.Team };
                     break;
                 case ReturningPlayer p5:
-                    values = new object[] { p5.Name, p5.KickReturns, p5.GamesPlayed, p5.KickReturnYards, p5.KickReturnTouchdowns, p5.PuntReturnAttempts, p5.PuntReturnYards, p5.PuntReturnTouchdowns };
+                    values = new object[] { p5.Name, p5.KickReturns, p5.GamesPlayed, p5.KickReturnYards, p5.KickReturnTouchdowns, p5.PuntReturnAttempts, p5.PuntReturnYards, p5.PuntReturnTouchdowns, p5.Team };
                     break;
                 case RushingPlayer p6:
-                    values = new object[] { p6.Name, p6.RushAttempts, p6.GamesPlayed, p6.RushingYards, p6.RushTouchdowns, p6.Fumbles };
+                    values = new object[] { p6.Name, p6.RushAttempts, p6.GamesPlayed, p6.RushingYards, p6.RushTouchdowns, p6.Fumbles, p6.Team };
                     break;
             }
             WriteFields(worksheet, row, values);
@@ -62,6 +62,8 @@ namespace MaddenImporter.Excel
                 worksheet.Cell("F2").Value = "TD";
                 worksheet.Cell("G2").Value = "Int";
                 worksheet.Cell("H2").Value = "Sk";
+                worksheet.Cell("I2").Value = "Team";
+
             }
             if (typeof(T) == typeof(KickingPlayer))
             {
@@ -73,6 +75,7 @@ namespace MaddenImporter.Excel
                 worksheet.Cell("F2").Value = "FGM";
                 worksheet.Cell("G2").Value = "FGA";
                 worksheet.Cell("H2").Value = "Yds";
+                worksheet.Cell("I2").Value = "Team";
             }
             if (typeof(T) == typeof(DefensePlayer))
             {
@@ -94,12 +97,14 @@ namespace MaddenImporter.Excel
                 worksheet.Cell("K2").Value = "Yds";
                 worksheet.Cell("L2").Value = "TD";
                 worksheet.Cell("M2").Value = "FF";
+                worksheet.Cell("N2").Value = "Team";
             }
             if (typeof(T) == typeof(ReceivingPlayer))
             {
                 worksheet.Cell("B2").Value = "Rec";
                 worksheet.Cell("D2").Value = "Yds";
                 worksheet.Cell("E2").Value = "TD";
+                worksheet.Cell("F2").Value = "Team";
             }
             if (typeof(T) == typeof(ReturningPlayer))
             {
@@ -112,6 +117,7 @@ namespace MaddenImporter.Excel
                 worksheet.Cell("F2").Value = "Ret";
                 worksheet.Cell("G2").Value = "Yds";
                 worksheet.Cell("H2").Value = "TD";
+                worksheet.Cell("I2").Value = "Team";
             }
             if (typeof(T) == typeof(RushingPlayer))
             {
@@ -122,6 +128,7 @@ namespace MaddenImporter.Excel
                 worksheet.Cell("E1").Value = "Rush";
                 worksheet.Cell("E2").Value = "TD";
                 worksheet.Cell("F2").Value = "Fmb";
+                worksheet.Cell("G2").Value = "Team";
             }
         }
 
