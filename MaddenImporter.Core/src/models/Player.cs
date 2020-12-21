@@ -7,6 +7,7 @@ namespace MaddenImporter.Models.Player
         public string Position { get; set; }
         public int GamesPlayed { get; set; }
         public int GamesStarted { get; set; }
+        public int ApproximateValue { get; set; }
 
         public override string ToString()
         {
