@@ -55,7 +55,7 @@
         {
             "label": "Zip Windows",
             "type": "shell",
-            "command": "zip ./dist/win-x64 ./dist/win-x64/maddenimporter.excel.exe",
+            "command": "zip ./dist/win10-x64/win10-x64 ./dist/win10-x64/maddenimporter.excel.exe",
             "problemMatcher": "$msCompile"
         },
         {
@@ -77,9 +77,9 @@
             "id": "outputDirectory",
             "description": "The directory to output the distributable to.",
             "type": "pickString",
-            "default": "./dist/win-x64/",
+            "default": "./dist/win10-x64/",
             "options": [
-                "./dist/win-x64/",
+                "./dist/win10-x64/",
                 "./dist/osx/",
                 "./dist/linux-x64/",
                 "./dist/linux-arm/"
