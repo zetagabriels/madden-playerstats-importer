@@ -6,6 +6,7 @@
 geckodriver*
 temp/
 output/
+dist/
 *.private
 
 # User-specific files

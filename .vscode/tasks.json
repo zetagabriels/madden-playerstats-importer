@@ -27,38 +27,36 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Publish Windows",
-            "type": "shell",
-            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/win-x64/ -r win10-x64 ${workspaceFolder}/MaddenImporter.Excel/",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Publish OSX",
-            "type": "shell",
-            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/osx/ -r osx-x64 ${workspaceFolder}/MaddenImporter.Excel/",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Publish Linux x64",
-            "type": "shell",
-            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux-x64/ -r linux-x64 ${workspaceFolder}/MaddenImporter.Excel/",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Publish Linux ARM",
-            "type": "shell",
-            "command": "dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -c Release -o dist/linux-arm/ -r linux-arm ${workspaceFolder}/MaddenImporter.Excel/",
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "Publish",
-            "dependsOn": [
-                "Publish Windows",
-                "Publish OSX",
-                "Publish Linux x64",
-                "Publish Linux ARM"
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "-p:PublishSingleFile=true",
+                "-p:PublishTrimmed=true", 
+                "--self-contained",
+                "true",
+                "-c",
+                "Release",
+                "-o",
+                "${input:outputDirectory}",
+                "-r",
+                "${input:targetPlatform}",
+                "${workspaceFolder}/MaddenImporter.Excel/"
             ],
-            "dependsOrder": "sequence"
+            "problemMatcher": []
+        },
+        {
+            "label": "Zip",
+            "type": "shell",
+            "command": "zip ${input:outputDirectory}${input:targetPlatform} ${input:outputDirectory}maddenimporter.excel",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Zip Windows",
+            "type": "shell",
+            "command": "zip ./dist/win10-x64/win10-x64 ./dist/win10-x64/maddenimporter.excel.exe",
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "watch",
@@ -72,6 +70,32 @@
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "outputDirectory",
+            "description": "The directory to output the distributable to.",
+            "type": "pickString",
+            "default": "./dist/win10-x64/",
+            "options": [
+                "./dist/win10-x64/",
+                "./dist/osx/",
+                "./dist/linux-x64/",
+                "./dist/linux-arm/"
+            ]
+        },
+        {
+            "id": "targetPlatform",
+            "description": "The target platform.",
+            "type": "pickString",
+            "default": "win10-x64",
+            "options": [
+                "win10-x64",
+                "osx-x64",
+                "linux-x64",
+                "linux-arm"
+            ]
         }
     ]
 }

@@ -120,6 +120,8 @@ namespace MaddenImporter.Core
             TryAddKeyValuePair("PuntReturnAttempts", "punt_ret");
             TryAddKeyValuePair("PuntReturnYards", "punt_ret_yds");
             TryAddKeyValuePair("PuntReturnTouchdowns", "punt_ret_td");
+            TryAddKeyValuePair("ApproximateValue", "av");
+
             return System.Text.Json.JsonSerializer.Serialize(dict);
         }
     }

@@ -23,9 +23,9 @@ dotnet run -p MaddenImporter.Excel/ -- [-y year] [--path path] [--career] [-u us
 
 If you wish to use a different file format, the `MaddenImporter` class library contains all the necessary functions and data.
 
-### From dist
+### Pre-built
 
-The executable file for your operating system can be found in the `dist/` folder, and in the Releases page. We support Windows x64, macOS x64, Linux x64, and Linux ARM. If you are using an ARM-based machine, you may need to build the geckodriver executable from the source code.
+The executable file for your operating system can be found on the Releases page. We support Windows x64, macOS x64, Linux x64, and Linux ARM. If you are using an ARM-based machine, you may need to build the geckodriver executable from the source code.
 
 ```bash
 ./maddenimporter.excel(.exe) [-y year] [--path path] [--career] [-u username] [-p password]
