@@ -73,7 +73,7 @@ namespace MaddenImporter.Core
             return jsons;
         }
 
-        private IEnumerable<string> GetPlayersJson(int startYear, int endYear, PlayerType playerType)
+        private IEnumerable<string> GetPlayersJson(PlayerType playerType, int startYear, int endYear)
         {
             // pull data
             int offset = 0;
@@ -136,7 +136,7 @@ namespace MaddenImporter.Core
 
             foreach (var enumType in types)
             {
-                var retrieved = GetPlayersJson(startYear, endYear, enumType);
+                var retrieved = GetPlayersJson(enumType, startYear, endYear);
                 var r = retrieved.Select(p => enumType.ConvertFromJson(p, Extensions.RemapKeys));
                 Console.WriteLine($"Retrieved {retrieved.Count()} {enumType} players.");
                 players = players.Concat(r);
